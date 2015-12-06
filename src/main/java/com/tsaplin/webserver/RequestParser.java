@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.ImmutableMap.copyOf;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -25,15 +24,24 @@ public class RequestParser {
 
     public HttpRequest parse(InputStream is) throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        RequestBuilder requestBuilder = new RequestBuilder();
 
-        // parse request line
+        // request line
         String requestLineParts[] = reader.readLine().split("\\s+");
         checkState(requestLineParts.length == 3);
-        HttpMethod method = HttpMethod.valueOf(requestLineParts[0]);
-        String url = resolveUrl(requestLineParts[1].split("\\?")[0]);
-        HttpProtocolVersion version = HttpProtocolVersion.parse(requestLineParts[2]);
 
-        // parse headers
+        // method
+        requestBuilder.setMethod(HttpMethod.valueOf(requestLineParts[0]));
+
+        // url & query string
+        String[] urlParts = requestLineParts[1].split("\\?");
+        requestBuilder.setUrl(resolveUrl(urlParts[0]));
+        requestBuilder.setQuery(urlParts.length > 1 ? urlParts[1] : "");
+
+        // protocol version
+        requestBuilder.setVersion(HttpProtocolVersion.parse(requestLineParts[2]));
+
+        // headers
         Map<String, String> headers = newHashMap();
         String headerLine = reader.readLine();
         while(headerLine != null && !headerLine.isEmpty()) {
@@ -43,7 +51,7 @@ public class RequestParser {
             headerLine = reader.readLine();
         }
 
-        return new HttpRequest(method, url, version, copyOf(headers), readContent(headers, is));
+        return requestBuilder.setHeaders(headers).setContent(readContent(headers, is)).build();
     }
 
     private byte[] readContent(Map<String, String> headers, InputStream is) throws IOException {

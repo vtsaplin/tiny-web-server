@@ -10,7 +10,7 @@ import static org.mockito.Mockito.*;
 public class RequestDispatcherImplTest {
 
     static final HttpRequest REQUEST = new HttpRequest(
-            HttpMethod.GET, "/index.html", HttpProtocolVersion.HTTP_1_1, ImmutableMap.of(), new byte[0]);
+            HttpMethod.GET, "/index.html", "", HttpProtocolVersion.HTTP_1_1, ImmutableMap.of(), new byte[0]);
 
     RequestHandler requestHandler;
     RequestHandlerFactory requestHandlerFactory;

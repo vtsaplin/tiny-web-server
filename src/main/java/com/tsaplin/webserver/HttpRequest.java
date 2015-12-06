@@ -1,27 +1,36 @@
 package com.tsaplin.webserver;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents HTTP request.
  */
 public class HttpRequest {
 
-    private HttpMethod method;
-    private String url;
-    private HttpProtocolVersion version;
-
-    private Map<String, String> headers;
-
+    private final HttpMethod method;
+    private final String url;
+    private final String query;
+    private final HttpProtocolVersion version;
+    private final Map<String, String> headers;
     private final byte[] content;
 
-    public HttpRequest(HttpMethod method, String url, HttpProtocolVersion version, Map<String, String> headers, byte[] content) {
+    public HttpRequest(
+            HttpMethod method,
+            String url,
+            String query,
+            HttpProtocolVersion version,
+            Map<String, String> headers,
+            byte[] content) {
+
         this.method = method;
         this.url = url;
+        this.query = query;
         this.version = version;
-        this.headers = headers;
+        this.headers = ImmutableMap.copyOf(headers);
         this.content = content;
     }
 
@@ -31,6 +40,10 @@ public class HttpRequest {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getQuery() {
+        return query;
     }
 
     public HttpProtocolVersion getVersion() {
@@ -51,15 +64,16 @@ public class HttpRequest {
         if (o == null || getClass() != o.getClass()) return false;
         HttpRequest that = (HttpRequest) o;
         return method == that.method &&
-                java.util.Objects.equals(url, that.url) &&
-                java.util.Objects.equals(version, that.version) &&
-                java.util.Objects.equals(headers, that.headers) &&
+                Objects.equals(url, that.url) &&
+                Objects.equals(query, that.query) &&
+                Objects.equals(version, that.version) &&
+                Objects.equals(headers, that.headers) &&
                 Arrays.equals(content, that.content);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(method, url, version, headers, content);
+        return Objects.hash(method, url, query, version, headers, content);
     }
 
     @Override
@@ -67,8 +81,10 @@ public class HttpRequest {
         return MoreObjects.toStringHelper(this)
                 .add("method", method)
                 .add("url", url)
+                .add("query", query)
                 .add("version", version)
                 .add("headers", headers)
+                .add("content", content)
                 .toString();
     }
 }
