@@ -22,5 +22,5 @@ Getting started
 6. Run {server_home}/bin/tiny-web-server
 
 Tests
-=====
+-----
 To execute tests run ./gradlew test or ./gradlew integrationTest   
