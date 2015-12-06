@@ -1,0 +1,7 @@
+<webserver>
+    <documentRoot>webapps</documentRoot>
+    <welcomeFile>index.html</welcomeFile>
+    <address>localhost</address>
+    <port>8080</port>
+    <connectionTimeout>5000</connectionTimeout>
+</webserver>

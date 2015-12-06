@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sample Web Page</title>
+        <script src="js/jquery-2.1.4.min.js"></script>
+        <script src="js/jquery.countdown.min.js"></script>
+        <script>
+            $(function() {
+                $('#countdown').countdown('2016/01/01', function(event) {
+                    $(this).html(event.strftime('%w weeks %d days %H:%M:%S'));
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <h2>New year is coming soon!</h2>
+        <div id="countdown"></div>
+        <img src="images/christmas-tree.png"/>
+    </body>
+</html>
