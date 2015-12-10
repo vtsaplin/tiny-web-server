@@ -26,6 +26,7 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile 'org.slf4j:slf4j-log4j12:1.7.13'
     compile 'log4j:log4j:1.2.17'
+    compile 'com.google.code.findbugs:jsr305:3.0.1'
     testCompile 'net.sourceforge.htmlunit:htmlunit:2.19'
     testCompile 'net.lingala.zip4j:zip4j:1.2.4'
     testCompile 'org.mockito:mockito-all:1.9.5'

@@ -1,9 +1,11 @@
 package com.tsaplin.webserver;
 
-import java.io.BufferedReader;
+import com.google.common.base.Optional;
+
+import javax.annotation.Nullable;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -22,12 +24,16 @@ public class RequestParser {
         this.configuration = configuration;
     }
 
-    public HttpRequest parse(InputStream is) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+    public Optional<HttpRequest> parse(InputStream is) throws Exception {
+        BufferedInputStream bis = new BufferedInputStream(is);
         RequestBuilder requestBuilder = new RequestBuilder();
 
         // request line
-        String requestLineParts[] = reader.readLine().split("\\s+");
+        String requestLine = readLine(bis);
+        if (requestLine == null) {
+            return Optional.absent();
+        }
+        String requestLineParts[] = requestLine.split("\\s+");
         checkState(requestLineParts.length == 3);
 
         // method
@@ -43,22 +49,37 @@ public class RequestParser {
 
         // headers
         Map<String, String> headers = newHashMap();
-        String headerLine = reader.readLine();
+        String headerLine = readLine(bis);
         while(headerLine != null && !headerLine.isEmpty()) {
             int colonIndex = headerLine.indexOf(':');
             checkState(colonIndex != -1);
             headers.put(headerLine.substring(0, colonIndex).trim(), headerLine.substring(colonIndex + 1).trim());
-            headerLine = reader.readLine();
+            headerLine = readLine(bis);
         }
 
-        return requestBuilder.setHeaders(headers).setContent(readContent(headers, is)).build();
+        return Optional.of(requestBuilder.setHeaders(headers).setContent(readContent(headers, bis)).build());
     }
 
-    private byte[] readContent(Map<String, String> headers, InputStream is) throws IOException {
+    private @Nullable String readLine(BufferedInputStream bis) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        while(true) {
+            int ch = bis.read();
+            if (ch == '\r') {
+                checkState((char) bis.read() == '\n');
+                return sb.toString();
+            } else if (ch == -1) {
+                return null;
+            } else {
+                sb.append((char) ch);
+            }
+        }
+    }
+
+    private byte[] readContent(Map<String, String> headers, BufferedInputStream bis) throws IOException {
         if (headers.containsKey(CONTENT_LENGTH)) {
             int contentLength = Integer.parseInt(headers.get(CONTENT_LENGTH));
             byte[] content = new byte[contentLength];
-            is.read(content);
+            bis.read(content);
             return content;
         }
         return new byte[0];

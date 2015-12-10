@@ -1,10 +1,12 @@
 package com.tsaplin.webserver;
 
+import com.google.common.base.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
 
@@ -31,10 +33,15 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         try {
             socket.setSoTimeout(configuration.getConnectionTimeout());
             while (true) {
-                HttpRequest request = requestParser.parse(socket.getInputStream());
-                requestDispatcher.dispatch(request).write(socket.getOutputStream());
-                if (!isConnectionPersistent(request.getVersion())) {
-                    logger.info("Client does not support persistent connections");
+                Optional<HttpRequest> request = requestParser.parse(socket.getInputStream());
+                if (request.isPresent()) {
+                    requestDispatcher.dispatch(request.get()).write(socket.getOutputStream());
+                    if (!isConnectionPersistent(request.get().getVersion())) {
+                        logger.info("Client does not support persistent connections");
+                        break;
+                    }
+                } else {
+                    logger.info("Client closed connection");
                     break;
                 }
             }
