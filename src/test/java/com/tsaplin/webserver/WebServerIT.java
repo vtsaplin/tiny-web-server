@@ -3,14 +3,15 @@ package com.tsaplin.webserver;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.common.io.ByteStreams;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.concurrent.Executors;
 import net.lingala.zip4j.core.ZipFile;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.concurrent.Executors;
 
 public class WebServerIT {
 
@@ -23,8 +24,9 @@ public class WebServerIT {
         Configuration configuration = new Configuration();
         configuration.setDocumentRoot(prepareWebappAndReturnDocumentRoot());
 
+        RequestTransformer requestTransformer = new RequestTransformerImpl(configuration);
         RequestHandlerFactory requestHandlerRegistry = new RequestHandlerFactoryImpl(configuration);
-        RequestDispatcher requestDispatcher = new RequestDispatcherImpl(requestHandlerRegistry);
+        RequestDispatcher requestDispatcher = new RequestDispatcherImpl(requestTransformer, requestHandlerRegistry);
         WebServer server = new WebServer(requestDispatcher, configuration);
 
         Executors.newSingleThreadExecutor().execute(() -> server.serve());

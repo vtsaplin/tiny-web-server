@@ -16,6 +16,18 @@ public class RequestBuilder {
     private Map<String, String> headers;
     private byte[] content;
 
+    public RequestBuilder() {
+    }
+
+    public RequestBuilder(HttpRequest request) {
+        this.method = request.getMethod();
+        this.url = request.getUrl();
+        this.query = request.getQuery();
+        this.version = request.getVersion();
+        this.headers = request.getHeaders();
+        this.content = request.getContent();
+    }
+
     public HttpMethod getMethod() {
         return method;
     }

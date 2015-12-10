@@ -1,11 +1,12 @@
 package com.tsaplin.webserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Starts web server with default behaviour.
@@ -34,7 +35,9 @@ public class WebServerLauncher {
             }
 
             RequestHandlerFactory requestHandlerRegistry = new RequestHandlerFactoryImpl(configuration);
-            RequestDispatcher requestDispatcher = new RequestDispatcherImpl(requestHandlerRegistry);
+            RequestTransformer requestTransformer = new RequestTransformerImpl(configuration);
+            RequestDispatcher requestDispatcher = new RequestDispatcherImpl(requestTransformer, requestHandlerRegistry);
+
             new WebServer(requestDispatcher, configuration).serve();
 
         } catch (Exception e) {

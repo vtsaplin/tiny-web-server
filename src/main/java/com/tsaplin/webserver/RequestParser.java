@@ -41,7 +41,7 @@ public class RequestParser {
 
         // url & query string
         String[] urlParts = requestLineParts[1].split("\\?");
-        requestBuilder.setUrl(resolveUrl(urlParts[0]));
+        requestBuilder.setUrl(urlParts[0]);
         requestBuilder.setQuery(urlParts.length > 1 ? urlParts[1] : "");
 
         // protocol version
@@ -85,10 +85,4 @@ public class RequestParser {
         return new byte[0];
     }
 
-    protected String resolveUrl(String url) {
-        if (url.endsWith("/")) {
-            return url + configuration.getWelcomeFile();
-        }
-        return url;
-    }
 }

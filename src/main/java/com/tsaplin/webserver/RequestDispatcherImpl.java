@@ -7,9 +7,11 @@ public class RequestDispatcherImpl implements RequestDispatcher {
 
     private static Logger logger = LoggerFactory.getLogger(RequestDispatcherImpl.class);
 
+    private final RequestTransformer requestTransformer;
     private final RequestHandlerFactory requestHandlerFactory;
 
-    public RequestDispatcherImpl(RequestHandlerFactory requestHandlerFactory) {
+    public RequestDispatcherImpl(RequestTransformer requestTransformer, RequestHandlerFactory requestHandlerFactory) {
+        this.requestTransformer = requestTransformer;
         this.requestHandlerFactory = requestHandlerFactory;
     }
 
@@ -17,8 +19,10 @@ public class RequestDispatcherImpl implements RequestDispatcher {
     public HttpResponse dispatch(HttpRequest request) {
         logger.info("Handling request " + request);
         try {
-            return requestHandlerFactory.getRequestHandler(request).handleRequest(request);
+            HttpRequest transformedRequest = requestTransformer.transform(request);
+            return requestHandlerFactory.getRequestHandler(transformedRequest).handleRequest(transformedRequest);
         } catch (Exception e) {
+            logger.error("Error while dispatching request", e);
             return HttpResponse.INTERNAL_SERVER_ERROR;
         }
     }

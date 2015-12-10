@@ -1,8 +1,9 @@
 package com.tsaplin.webserver;
 
 import com.google.common.collect.ImmutableMap;
-import java.io.ByteArrayInputStream;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +17,7 @@ public class RequestParserTest {
         HttpRequest request = new HttpRequest(
                 HttpMethod.GET, "/index.html", "", HttpProtocolVersion.HTTP_1_1, ImmutableMap.of(), new byte[0]);
         ByteArrayInputStream bais = new ByteArrayInputStream(requestString.getBytes());
-        assertEquals(requestParser.parse(bais), request);
+        assertEquals(requestParser.parse(bais).get(), request);
     }
 
     @Test
@@ -25,6 +26,6 @@ public class RequestParserTest {
         HttpRequest request = new HttpRequest(
                 HttpMethod.GET, "/index.html", "value=1&value=2", HttpProtocolVersion.HTTP_1_1, ImmutableMap.of(), new byte[0]);
         ByteArrayInputStream bais = new ByteArrayInputStream(requestString.getBytes());
-        assertEquals(requestParser.parse(bais), request);
+        assertEquals(requestParser.parse(bais).get(), request);
     }
 }

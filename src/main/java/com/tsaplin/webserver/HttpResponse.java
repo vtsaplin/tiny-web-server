@@ -1,11 +1,14 @@
 package com.tsaplin.webserver;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents HTTP response.
@@ -56,4 +59,26 @@ public class HttpResponse {
     }
 
     public void writeContent(OutputStream os) throws IOException {}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HttpResponse that = (HttpResponse) o;
+        return status == that.status &&
+                Objects.equals(headers, that.headers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, headers);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("status", status)
+                .add("headers", headers)
+                .toString();
+    }
 }
