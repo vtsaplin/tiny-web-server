@@ -15,7 +15,7 @@ public class WebServerLauncher {
 
     private static Logger logger = LoggerFactory.getLogger(WebServerLauncher.class);
 
-    private static final String HOME_DIR_ENV = "WEBSERVER_HOME";
+    private static final String HOME_DIR_ENV = "TINY_SERVER_HOME";
     private static final String CONFIG_FILE = "config.xml";
 
     public static void main(String[] args) {
