@@ -22,10 +22,11 @@ public class WebServerIT {
     public void shouldServeStaticContent() throws Exception {
 
         Configuration configuration = new Configuration();
-        configuration.setDocumentRoot(prepareWebappAndReturnDocumentRoot());
+        configuration.setDocumentRoot(prepareContentAndReturnDocumentRoot());
 
         RequestTransformer requestTransformer = new RequestTransformerImpl(configuration);
-        RequestHandlerFactory requestHandlerRegistry = new RequestHandlerFactoryImpl(configuration);
+        FileRequestHandler defaultRequestHandler = new FileRequestHandler(configuration);
+        RequestHandlerFactory requestHandlerRegistry = new RequestHandlerFactoryImpl(defaultRequestHandler, configuration);
         RequestDispatcher requestDispatcher = new RequestDispatcherImpl(requestTransformer, requestHandlerRegistry);
         WebServer server = new WebServer(requestDispatcher, configuration);
 
@@ -40,7 +41,7 @@ public class WebServerIT {
         server.shutdown();
     }
 
-    private String prepareWebappAndReturnDocumentRoot() throws Exception {
+    private String prepareContentAndReturnDocumentRoot() throws Exception {
         File zipFile = tempFolder.newFile("test1.zip");
         ByteStreams.copy(WebServerIT.class.getResourceAsStream("/test1.zip"), new FileOutputStream(zipFile));
 

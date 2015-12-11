@@ -7,6 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RequestHandlerFactoryImplTest {
 
@@ -15,12 +16,15 @@ public class RequestHandlerFactoryImplTest {
 
     static final RequestHandler REQUEST_HANDLER = mock(RequestHandler.class);
 
+    RequestHandler defaultRequestHandler;
     RequestHandlerFactoryImpl requestHandlerFactory;
 
     @Before
     public void setUp() throws Exception {
         Configuration configuration = new Configuration();
-        requestHandlerFactory = new RequestHandlerFactoryImpl(configuration);
+        defaultRequestHandler = mock(RequestHandler.class);
+        when(defaultRequestHandler.handleRequest(REQUEST)).thenReturn(HttpResponse.OK);
+        requestHandlerFactory = new RequestHandlerFactoryImpl(defaultRequestHandler, configuration);
     }
 
     @Test
@@ -37,6 +41,6 @@ public class RequestHandlerFactoryImplTest {
 
     @Test
     public void shouldReturnDefaultRequestHandler() throws Exception {
-        assertNotNull(requestHandlerFactory.getRequestHandler(REQUEST));
+        assertEquals(defaultRequestHandler, requestHandlerFactory.getRequestHandler(REQUEST));
     }
 }

@@ -16,13 +16,9 @@ public class RequestHandlerFactoryImpl implements RequestHandlerFactory {
     private final Configuration configuration;
     private final RequestHandler defaultRequestHandler;
 
-    public RequestHandlerFactoryImpl(Configuration configuration) {
+    public RequestHandlerFactoryImpl(RequestHandler defaultRequestHandler, Configuration configuration) {
         this.configuration = configuration;
-        this.defaultRequestHandler = newDefaultRequestHandler(configuration);
-    }
-
-    protected RequestHandler newDefaultRequestHandler(Configuration configuration) {
-        return new FileRequestHandler(configuration);
+        this.defaultRequestHandler = defaultRequestHandler;
     }
 
     public void addRequestHandler(String pattern, RequestHandler handler) {

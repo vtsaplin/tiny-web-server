@@ -34,9 +34,10 @@ public class WebServerLauncher {
                 configuration.setDocumentRoot(homeDir.resolve(configuration.getDocumentRoot()).toString());
             }
 
-            RequestHandlerFactory requestHandlerRegistry = new RequestHandlerFactoryImpl(configuration);
+            FileRequestHandler defaultRequestHandler = new FileRequestHandler(configuration);
+            RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactoryImpl(defaultRequestHandler, configuration);
             RequestTransformer requestTransformer = new RequestTransformerImpl(configuration);
-            RequestDispatcher requestDispatcher = new RequestDispatcherImpl(requestTransformer, requestHandlerRegistry);
+            RequestDispatcher requestDispatcher = new RequestDispatcherImpl(requestTransformer, requestHandlerFactory);
 
             new WebServer(requestDispatcher, configuration).serve();
 
