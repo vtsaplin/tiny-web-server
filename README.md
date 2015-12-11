@@ -10,7 +10,7 @@ Features
 * embeddable
 * configurable
 * extensible
-* supports persisted connections
+* supports persistent connections
 
 Getting started
 ---------------
